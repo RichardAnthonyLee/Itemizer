@@ -85,6 +85,25 @@ class ItemizerTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $made instanceof ItemCollection, true );
 		$this->assertEquals( $madeItem->getName(), "example2" );
 
+
+
+	}
+
+	/**
+	* @depends testInit
+	**/
+
+	public function testItemCallbacks( $items )
+	{
+
+		$items->add( new Item("example") );
+
+		$example = $items->get( "example" );
+
+		$this->assertEquals( $example instanceof Item, true );
+
+		$items->remove( "example" );
+
 	}
 
 

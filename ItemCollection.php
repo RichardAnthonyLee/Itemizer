@@ -19,9 +19,19 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 
 	use \RicAnthonyLee\Itemizer\Traits\ItemTrait;
 	use \RicAnthonyLee\Itemizer\Traits\FormattableItemTrait;
+	use \RicAnthonyLee\Itemizer\Traits\CallbackMapperTrait;
 
 
 	protected $allower, $name, $alias, $value, $factory, $itemFactory;
+
+
+    public function __construct($items = [])
+    {
+
+       parent::__construct($items);
+       $this->__setCallbacks();
+    
+    }
 
 
 	/**
@@ -202,4 +212,24 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 		return $this->itemFactory;
 
 	}	
+
+	/**
+	* set the configuration callback/map for the __call magic method
+	* @return void
+	**/
+
+	protected function __setCallbacks()
+	{
+
+		$this->setCallbackMap([  
+			"add"     => "addItem",
+			"remove"  => "removeItem",
+			"set"     => "addItem",
+			"has"     => "hasItem",
+			"value"   => "getValue",
+			"factory" => "getFactory",
+			"item"    => "getItemFactory"
+		]);
+
+	}
 }
