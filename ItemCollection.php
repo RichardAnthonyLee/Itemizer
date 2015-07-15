@@ -47,6 +47,7 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 
 	}
 
+
 	/**
 	* @return array of Items
 	**/
@@ -70,7 +71,7 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 
 		if( $allower ) $allower->isAllowedOrFail( $item );
 
-		$this->offsetSet( $item->getAlias(), $item );
+		$this->items[ $item->getAlias() ] = $item;
 
 	}
 
@@ -81,8 +82,31 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 	public function getItem( $name )
 	{
 
-		return $this->offsetGet( $name );
+		return $this->items[ $name ];
 
+	}
+
+	/**
+	* set item array style
+	**/
+
+
+	public function offsetSet($key, $v)
+	{
+
+		return $this->setItem( $key, $v );
+
+	}
+
+	/**
+	* get an item by alias/name
+	**/
+
+	public function offsetGet( $key )
+	{
+
+		return $this->getItem( $key );
+		
 	}
 
 	/**
