@@ -3,6 +3,8 @@
 
 use RicAnthonyLee\Itemizer\Item;
 use RicAnthonyLee\Itemizer\Interfaces\ItemInterface;
+use RicAnthonyLee\Itemizer\Interfaces\ItemFactoryInterface;
+use RicAnthonyLee\Itemizer\Interfaces\ItemCollectionFactoryInterface;
 use RicAnthonyLee\Itemizer\Interfaces\ItemCollectionInterface;
 use RicAnthonyLee\Itemizer\Interfaces\FormattableItemInterface;
 use RicAnthonyLee\Itemizer\Interfaces\FormatterInterface;
@@ -19,7 +21,7 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 	use \RicAnthonyLee\Itemizer\Traits\FormattableItemTrait;
 
 
-	protected $allower, $name, $alias, $value;
+	protected $allower, $name, $alias, $value, $factory, $itemFactory;
 
 
 	/**
@@ -155,4 +157,49 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 
 	}
 
+	/**
+	* set the factory object for creating item collections
+	**/
+
+	public function setFactory( ItemCollectionFactoryInterface $factory )
+	{
+
+		$this->factory = $factory;
+		return $this;
+
+	}
+
+	/**
+	* @return the factory object for creating item collection
+	**/
+
+	public function getFactory()
+	{
+
+		return $this->factory;
+
+	}
+
+	/**
+	* set the factory object for creating items
+	**/
+
+	public function setItemFactory( ItemFactoryInterface $factory )
+	{
+
+		$this->itemFactory = $factory;
+		return $this;
+
+	}
+
+	/**
+	* @return the factory object for creating items
+	**/
+
+	public function getItemFactory()
+	{
+
+		return $this->itemFactory;
+
+	}	
 }

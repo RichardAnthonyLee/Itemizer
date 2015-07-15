@@ -39,17 +39,32 @@ interface ItemCollectionInterface extends \IteratorAggregate{
 
 	public function getAllower();
 
+
+	/**
+	* set the factory object for creating item Collections
+	**/
+
+	public function setFactory( ItemCollectionFactoryInterface $factory );
+
+	/**
+	* get the factory object for creating item collections
+	**/
+
+	public function getFactory();	
+
+
 	/**
 	* set the factory object for creating items
 	**/
 
-	public function setItemFactory( ItemFactory $factory );
+	public function setItemFactory( ItemFactoryInterface $factory );
+
 
 	/**
 	* get the factory object for creating items
 	**/
 
-	public function getItemFactory();
+	public function getItemFactory();	
 
 
 

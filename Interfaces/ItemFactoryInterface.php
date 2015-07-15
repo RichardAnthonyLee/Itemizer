@@ -8,7 +8,7 @@ interface ItemFactoryInterface{
 	**/
 
 
-	public function make( $name, $value, $alias );
+	public function make( $name, $value = false, $alias = false );
 
 
 }

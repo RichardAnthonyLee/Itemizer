@@ -3,6 +3,8 @@
 use RicAnthonyLee\Itemizer\Item;
 use RicAnthonyLee\Itemizer\Interfaces\ItemInterface;
 use RicAnthonyLee\Itemizer\ItemCollection;
+use RicAnthonyLee\Itemizer\ItemCollectionFactory;
+use RicAnthonyLee\Itemizer\ItemFactory;
 use RicAnthonyLee\Itemizer\Test\JsonFormatter;
 
 
@@ -63,6 +65,25 @@ class ItemizerTest extends PHPUnit_Framework_TestCase{
 
 		$this->assertEquals( is_object( $decoded ), true ); 
 
+
+	}
+
+	/**
+	* @depends testInit
+	**/
+
+	public function testItemFactories( $col )
+	{
+
+		$col->setFactory( new ItemCollectionFactory )
+			->setItemFactory( new ItemFactory );
+
+		$made     = $col->getFactory()->make( "example" );
+		$madeItem = $col->getItemFactory()->make( "example2", 1, "test" );
+
+
+		$this->assertEquals( $made instanceof ItemCollection, true );
+		$this->assertEquals( $madeItem->getName(), "example2" );
 
 	}
 
