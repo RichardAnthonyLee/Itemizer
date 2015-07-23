@@ -25,10 +25,20 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 	protected $allower, $name, $alias, $value, $factory, $itemFactory;
 
 
+	/**
+	* override default constructor so that each item
+	* in the collection is set through ::setItem method
+	**/
+
+
     public function __construct($items = [])
     {
 
-       parent::__construct($items);
+       foreach( $items as $i )
+       {
+       		$this->addItem( $i );
+       }
+
        $this->__setCallbacks();
     
     }

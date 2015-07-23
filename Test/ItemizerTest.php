@@ -17,6 +17,17 @@ class ItemizerTest extends PHPUnit_Framework_TestCase{
 	public function testInit()
 	{
 
+		$item  = new Item( "test",  "test", "test");
+		$item2 = new Item( "test2", "test2", "test2" );
+
+
+		$itemTest = new ItemCollection( [ $item, $item2 ] );
+
+
+		$this->assertEquals( "test2", $itemTest['test2'] );
+		$this->assertEquals( "test", $itemTest->getItem('test') );
+
+
 		$criteriaBuilder = new ItemCollection();
 		$dimensions      = new ItemCollection();
 
