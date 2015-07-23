@@ -6,8 +6,6 @@ use RicAnthonyLee\Itemizer\Interfaces\FormatterInterface;
 
 trait FormattableItemTrait{
 
-	protected $formatter;
-
 	/**
 	* set the service responsible for formatting data
 	**/
