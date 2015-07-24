@@ -38,7 +38,9 @@ class ItemizerTest extends PHPUnit_Framework_TestCase{
 
 
 		$dimensions->addItem( $ipAddress );
-		$criteriaBuilder->addItem( $dimensions );
+		
+		$criteriaBuilder["dimensions"] = $dimensions;
+
 
 		$ip = $criteriaBuilder->getItem( "dimensions" )->getItem( "ipAddress" )->getValue();
 

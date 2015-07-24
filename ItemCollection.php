@@ -27,7 +27,7 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 
 	/**
 	* override default constructor so that each item
-	* in the collection is set through ::setItem method
+	* in the collection is set through ::addItem method
 	**/
 
 
@@ -116,7 +116,11 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 	public function offsetSet($key, $v)
 	{
 
-		return $this->setItem( $key, $v );
+		$key = $v->getAlias() ?: $key;
+
+		$v->setAlias( $key );
+
+		return $this->addItem( $v );
 
 	}
 

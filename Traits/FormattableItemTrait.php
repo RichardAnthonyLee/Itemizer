@@ -25,7 +25,7 @@ trait FormattableItemTrait{
 	public function getFormatter()
 	{
 
-		return $this->formatter;
+		return isset( $this->formatter ) ? $this->formatter : null;
 
 	}
 
