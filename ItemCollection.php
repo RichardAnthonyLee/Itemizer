@@ -157,6 +157,8 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 
 		$this->items[ $item->getAlias() ] = $item; 
 
+		return $this;
+
 	}
 
 	/**

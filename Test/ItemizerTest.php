@@ -26,7 +26,6 @@ class ItemizerTest extends PHPUnit_Framework_TestCase{
 
 		$col->foo2 = $it->make( 'foo2', 'bar', 'Foo2' );
 
-
 		$this->assertEquals( $col->foo->value, $col['foo2']['value'] );
 
 
