@@ -37,7 +37,7 @@ trait FormattableItemTrait{
 	public function format()
 	{
 
-		return $this->formatter->format( $this );
+		return $this->getFormatter()->format( $this );
 
 	}
 

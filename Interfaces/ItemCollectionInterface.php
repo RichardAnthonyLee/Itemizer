@@ -7,7 +7,7 @@ interface ItemCollectionInterface extends \IteratorAggregate{
 	* add an item
 	**/
 
-	public function addItem( ItemInterface $item );
+	public function addItem( $key, $value, $alias );
 
 	/**
 	* get an item

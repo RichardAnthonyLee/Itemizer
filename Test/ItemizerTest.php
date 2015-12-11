@@ -17,67 +17,20 @@ class ItemizerTest extends PHPUnit_Framework_TestCase{
 	public function testInit()
 	{
 
-		$item  = new Item( "test",  "test", "test");
-		$item2 = new Item( "test2", "test2", "test2" );
+		$col = new ItemCollection();
+		$it  = new ItemFactory();
+		$col->setName( "test" );
+		$col->setItemFactory( $it );
+
+		$col->addItem( "foo", "bar", "foo" );
+
+		$col->foo2 = $it->make( 'foo2', 'bar', 'Foo2' );
 
 
-		$itemTest = new ItemCollection( [ $item, $item2 ] );
+		$this->assertEquals( $col->foo->value, $col['foo2']['value'] );
 
 
-		$this->assertEquals( "test2", $itemTest['test2'] );
-		$this->assertEquals( "test", $itemTest->getItem('test') );
-
-
-		$criteriaBuilder = new ItemCollection();
-		$dimensions      = new ItemCollection();
-
-		$criteriaBuilder->setName( "args" );
-		$dimensions->setName( "dimensions" );
-
-		$ipAddress       = new Item( "dimension1", "ipAddress", "127.0.0.1" );
-
-
-		$dimensions->addItem( $ipAddress );
-		
-		$criteriaBuilder["dimensions"] = $dimensions;
-
-
-		$ip = $criteriaBuilder->getItem( "dimensions" )->getItem( "ipAddress" )->getValue();
-
-
-		$this->assertEquals( "127.0.0.1", $ip );
-
-
-		$ipFromArray = $criteriaBuilder["dimensions"]["ipAddress"]->getValue();
-
-
-		$this->assertEquals( $ip, $ipFromArray );
-
-
-		$dimensionName = $criteriaBuilder["dimensions"]["ipAddress"]->getName();
-
-
-		$this->assertEquals("dimension1", $dimensionName);
-
-
-		return $criteriaBuilder;
-
-	}
-
-	/**
-	* @depends testInit
-	**/
-
-
-	public function testItemFormatting( $col )
-	{
-
-		$col->setFormatter( new JsonFormatter );
-
-		$decoded = json_decode( $col->format() );
-
-		$this->assertEquals( is_object( $decoded ), true ); 
-
+		return $col;
 
 	}
 
@@ -119,6 +72,34 @@ class ItemizerTest extends PHPUnit_Framework_TestCase{
 
 	}
 
+	/**
+	* @depends testInit
+	**/
 
+	public function testItemCreationViaOffsetSet( $col )
+	{
+
+
+		$col['foo'] = 'foo';
+		
+		$this->assertEquals( $col['foo']->getValue(), 'foo' );
+		$this->assertEquals( (string) $col['foo'], 'foo' );
+
+		return $col;
+
+	}
+
+	/**
+	* @depends testItemCreationViaOffsetSet
+	**/
+
+	public function testItemCreationViaAddItem( $col )
+	{
+
+		$col->addItem( "key", "value", "alias" );
+
+		$this->assertEquals( "value", (string) $col['alias'] );
+
+	}
 
 }

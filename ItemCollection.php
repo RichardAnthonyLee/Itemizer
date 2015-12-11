@@ -22,7 +22,7 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 	use \RicAnthonyLee\Itemizer\Traits\CallbackMapperTrait;
 
 
-	protected $allower, $name, $alias, $value, $factory, $itemFactory;
+	protected $allower, $name, $alias, $value, $factory, $itemFactory, $formatter, $items = [];
 
 
 	/**
@@ -34,13 +34,35 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
     public function __construct($items = [])
     {
 
-       foreach( $items as $i )
-       {
-       		$this->addItem( $i );
-       }
+    	if( !empty( $items ) )
+    		$this->setValue( $items );
 
        $this->__setCallbacks();
     
+    }
+
+    /**
+    * @return mixed value of collection name or value, or an item from the collection 
+    **/
+
+    public function __get( $var )
+    {
+
+    	return $this->offsetGet( $var );
+
+    }
+
+
+    /**
+    * sets value of collection name or value, or adds an item from the collection 
+    * @return void 
+    **/    
+
+    public function __set( $var, $value )
+    {
+
+    	return $this->offsetSet( $var, $value );
+
     }
 
 
@@ -60,8 +82,15 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 
 		foreach( $value as $v )
 		{
-			
-			$this->addItem( $v->getAlias(), $v );
+
+			//allow user to have passed either an item of an array 
+			//of item properties
+
+			call_user_func_array( 
+				[ $this, 'addItem' ], 
+				is_array( $v ) ? $v : (array) $v 
+			);
+
 
 		}
 
@@ -86,14 +115,47 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 	* add an item
 	**/
 
-	public function addItem( ItemInterface $item )
+	public function addItem( $key, $value = null, $alias = null )
 	{
+
+		$args = func_get_args();
+
+
+		switch ( count( $args ) ) 
+		{
+			case 1:
+				
+				if( !($args[0] instanceof ItemInterface) )
+				{
+
+					throw new \InvalidArgumentException( 
+						"Argument 1 for addItem method must be instance of RicAnthonyLee\Itemizer\Interfaces\ItemInterface" 
+					);
+
+				}
+
+				//pass item as-is if already created
+
+				$item = $args[0];
+
+			break;
+			
+			default:
+			
+				//create an item on the fly if parameters are passed to collection
+
+				$item = $this->getItemFactory()->make( $key, $value, $alias );
+
+			
+			break;
+		}
+
 
 		$allower = $this->getAllower();
 
 		if( $allower ) $allower->isAllowedOrFail( $item );
 
-		$this->items[ $item->getAlias() ] = $item;
+		$this->items[ $item->getAlias() ] = $item; 
 
 	}
 
@@ -116,9 +178,35 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 	public function offsetSet($key, $v)
 	{
 
-		$key = $v->getAlias() ?: $key;
+		if( is_null( $key ) )
+			throw new \InvalidArgumentException( "Item in ".get_class()."::offsetSet must be set with Associative key" );
 
-		$v->setAlias( $key );
+		if( ($v instanceof ItemInterface ) )
+		{
+
+			//if value is an Item object, just set the alias as the given key
+			$v->setAlias( $key );
+
+		}
+		else
+		{
+
+			//if key references name or value properties,
+			//set them
+
+			if( in_array( $key, ['name', 'value'] ) )
+			{
+
+				return $this->{'set'.ucfirst($key)}( $v );
+
+			}
+
+			//if value is not an Item object
+			//and the key is not referencing the name/value properties
+			//convert it to item
+			$v = $this->getItemFactory()->make( $key, $v );
+
+		}
 
 		return $this->addItem( $v );
 
@@ -130,6 +218,17 @@ class ItemCollection extends collection implements ItemCollectionInterface, Form
 
 	public function offsetGet( $key )
 	{
+		//if key references name or value properties,
+		//get them
+
+		if( in_array( $key, ['name', 'value'] ) )
+		{
+
+			return $this->{'get'.ucfirst($key)}();
+
+		}
+
+		//else attempt to get an Item
 
 		return $this->getItem( $key );
 		

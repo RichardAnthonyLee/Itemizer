@@ -7,16 +7,29 @@ use RicAnthonyLee\Itemizer\Interfaces\FormatterInterface;
 use RicAnthonyLee\Itemizer\Interfaces\MetaPropertyInterface;
 use RicAnthonyLee\Itemizer\Interfaces\MetaInterface;
 use RicAnthonyLee\Itemizer\Interfaces\ItemAllowerInterface;
+use ArrayAccess;
 
 
-class Item implements ItemInterface, FormattableItemInterface, MetaPropertyInterface{
+class Item implements ItemInterface, FormattableItemInterface, MetaPropertyInterface, ArrayAccess{
 
 
 	use \RicAnthonyLee\Itemizer\Traits\ItemTrait;
 	use \RicAnthonyLee\Itemizer\Traits\FormattableItemTrait;
+	use \RicAnthonyLee\Itemizer\Traits\AccessorTrait;
 
 
-	protected $name, $alias, $formatter, $meta, $value;
+	protected $name;
+
+	protected $alias;
+
+	protected $formatter; 
+
+	protected $meta;
+
+	protected $value; 
+
+
+	protected $accessibleProperties = [ 'name', 'value', 'alias' ];
 
 
 	public function __construct( $name, $alias = false, $value = null )
@@ -32,7 +45,6 @@ class Item implements ItemInterface, FormattableItemInterface, MetaPropertyInter
 
 	/**
 	* return formatted item if formatter returns string
-	* else return all values as json
 	**/
 
 	public function __toString()
@@ -45,14 +57,50 @@ class Item implements ItemInterface, FormattableItemInterface, MetaPropertyInter
 				return $format;
 
 		}
-		else if( is_string( $this->getValue() ) )
+		
+		return (string) $this->getValue();
+
+	}
+
+
+	public function offsetGet( $var )
+	{
+
+		if( !$this->isAccessibleProperty( $var ) )
 		{
-
-			return $this->getValue();
-
+			throw new \InvalidArgumentException( "Illegal Offset ".$var." for ".get_class() );
 		}
 
-		throw \Exception("Cannot convert RicAnthonyLee\Itemizer\Item to String");
+		return $this->__get( $var );
+
+	}
+
+	public function offsetSet( $var, $value )
+	{
+
+		if( !$this->isAccessibleProperty( $var ) )
+		{
+			throw new \InvalidArgumentException( "Illegal Offset ".$var." for ".get_class() );
+		}
+
+		return $this->__set( $var, $value );
+
+	}	
+
+	public function offsetExists( $var )
+	{
+		return !!$this->__get( $var );
+	}
+
+	public function offsetUnset( $var )
+	{
+
+		if( $var === 'value' )
+		{
+			$this->setValue( null );
+		}
+
+		return null;
 
 	}
 
